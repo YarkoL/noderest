@@ -19,14 +19,34 @@ router.post('/', function (req,res) {
 	});
 });
 
-// RETURNS ALL THE USERS IN THE DATABASE or fails gently
 router.get('/', function (req, res) {
 
     User.find({}, function (err, users) {
         if (err) return res.status(500).send("There was, um I guess a problem finding the users. Bummer");
         res.status(200).send(users);
     });
+});
 
+router.get('/:id', function (req,res) {
+	User.findById(req.params.id, function(err, user) {
+		if (err) return res.status(500).send("Well crap dude, something just went wrong. Try again later..");
+		if (!user) return res.status(404).send('Um dunno about that user. That guy seems not to be around, y know ');
+		res.status(200).send(user);
+	});
+});
+
+router.delete('/:id', function (req,res) {
+	User.findByIdAndRemove(req.params.id, function(err, user) {
+		if (err) return res.status(500).send("You sure you want to do this?? Seems like great guy... and anyways, something went wrong.");
+		res.status(200).send('Got rid of ' + user.name + ', hope your happy now');
+	});
+});
+
+router.put('/:id', function (req,res) {
+	User.findByIdAndUpdate(req.params.id, req.body, {new:true}, function(err, user) {
+		if (err) return res.status(500).send("Man I don't want to update, it's a hassle..");
+		res.status(200).send(user);
+	});
 });
 
 module.exports = router;
